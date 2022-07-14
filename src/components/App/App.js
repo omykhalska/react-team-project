@@ -1,26 +1,122 @@
+import { useEffect, Suspense, lazy } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { Global } from '@emotion/react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThemeProvider } from '@mui/material/styles';
 
 import { ThemeLight, ThemeDark } from '../../Theme';
 import { GlobalStyles } from '../../GlobalStyles';
+import {
+  authOperations,
+  authSelectors,
+} from '../../redux/auth';
 import { themeSelectors } from '../../redux/theme';
-import { Container } from '../Container';
-import { SwitchTheme } from '../SwitchTheme';
+import { MainLoader } from '../../components/MainLoader';
+
+import { PublicRoute } from '../../routes/PublicRoute';
+import { PrivateRoute } from '../../routes/PrivateRoute';
+
+import { Layout } from '../../Layout';
+const MainPage = lazy(() => import('../../pages/MainPage'));
+const LoginPage = lazy(() =>
+  import('../../pages/LoginPage')
+);
+const RegistrationPage = lazy(() =>
+  import('../../pages/RegistrationPage')
+);
+const DiaryPage = lazy(() =>
+  import('../../pages/DiaryPage')
+);
+const CalculatorPage = lazy(() =>
+  import('../../pages/CalculatorPage')
+);
+const NotFoundPage = lazy(() =>
+  import('../../pages/NotFoundPage')
+);
 
 export function App() {
+  const dispatch = useDispatch();
+  const isRefreshing = useSelector(
+    authSelectors.getIsRefreshing
+  );
+
   const isTheme = useSelector(themeSelectors.getTheme);
+  const currentTheme = !isTheme ? ThemeLight : ThemeDark;
+
+  useEffect(() => {
+    dispatch(authOperations.fetchCurrentUser());
+  }, [dispatch]);
+
   return (
-    <>
-      <ThemeProvider
-        theme={!isTheme ? ThemeLight : ThemeDark}
-      >
-        <Global styles={GlobalStyles} />
-        <Container>
-          <h1>Hi team</h1>
-          <SwitchTheme />
-        </Container>
-      </ThemeProvider>
-    </>
+    !isRefreshing && (
+      <>
+        <ThemeProvider theme={currentTheme}>
+          <Global styles={GlobalStyles} />
+
+          <Suspense
+            fallback={<MainLoader theme={currentTheme} />}
+          >
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route
+                  index
+                  element={
+                    <PublicRoute>
+                      <MainPage />
+                    </PublicRoute>
+                  }
+                />
+
+                <Route
+                  path="login"
+                  element={
+                    <PublicRoute
+                      restricted
+                      redirectTo="/calculator"
+                    >
+                      <LoginPage />
+                    </PublicRoute>
+                  }
+                />
+
+                <Route
+                  path="register"
+                  element={
+                    <PublicRoute
+                      restricted
+                      redirectTo="/calculator"
+                    >
+                      <RegistrationPage />
+                    </PublicRoute>
+                  }
+                />
+
+                <Route
+                  path="diary"
+                  element={
+                    <PrivateRoute>
+                      <DiaryPage theme={currentTheme} />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="calculator"
+                  element={
+                    <PrivateRoute>
+                      <CalculatorPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="*"
+                  element={<NotFoundPage />}
+                />
+              </Route>
+            </Routes>
+          </Suspense>
+        </ThemeProvider>
+      </>
+    )
   );
 }

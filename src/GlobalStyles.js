@@ -1,12 +1,11 @@
 import { css } from '@emotion/react';
 
-import Verdana from './fonts/Verdana.ttf';
-import VerdanaBold from './fonts/Verdana-Bold.ttf';
-import GothamproBold from './fonts/gothampro_bold.ttf';
-import GothamproLight from './fonts/gothampro_light.ttf';
+import Verdana from './assets/fonts/Verdana.ttf';
+import VerdanaBold from './assets/fonts/Verdana-Bold.ttf';
+import GothamproBold from './assets/fonts/gothampro_bold.ttf';
+import GothamproLight from './assets/fonts/gothampro_light.ttf';
 
 export const GlobalStyles = theme => css`
-  *,
   *::before,
   *::after {
     box-sizing: inherit;
@@ -46,7 +45,17 @@ export const GlobalStyles = theme => css`
     flex-direction: column;
     min-height: 100vh;
     font-family: 'Verdana';
-    background-color: ${theme.backgrounds.primary};
+    font-size: 14px;
+    background-color: ${theme.backgrounds.bodyPrimary};
+    color: ${theme.fontColors.primary};
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
   }
 
   h1,
@@ -82,5 +91,10 @@ export const GlobalStyles = theme => css`
 
   a {
     text-decoration: none;
+    outline: none;
+  }
+
+  button {
+    padding: 0;
   }
 `;
