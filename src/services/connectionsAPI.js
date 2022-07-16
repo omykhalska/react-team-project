@@ -1,6 +1,9 @@
 import axios from 'axios';
+// import { func } from 'prop-types';
 
-axios.defaults.baseURL = 'http://localhost:8080/api';
+import { baseURL } from '../libs/constants';
+
+axios.defaults.baseURL = baseURL;
 
 export const token = {
   set(token) {
@@ -10,6 +13,13 @@ export const token = {
     axios.defaults.headers.common.Authorization = '';
   },
 };
+
+export async function fetchGoogleAuth() {
+  const data = await axios
+    .get('/users/google')
+    .then(res => res.data);
+  return data;
+}
 
 export async function fetchRegister(userData) {
   const data = await axios
@@ -39,13 +49,6 @@ export async function fetchUsers() {
   return data;
 }
 
-export async function getKcal(dataCaloriesForm) {
-  const data = await axios
-    .post('/public/calculator', dataCaloriesForm)
-    .then(res => res.data);
-  return data;
-}
-
 export async function fetchUserData(calculatorData) {
   const data = await axios
     .patch('/users/calculator', calculatorData)
@@ -53,9 +56,10 @@ export async function fetchUserData(calculatorData) {
   return data;
 }
 
-export async function createProduct(product) {
+export async function getInfoByDate(date) {
   const data = await axios
-    .post(`/days`, product)
+    .get(`/days/${date}`)
     .then(res => res.data);
+
   return data;
 }

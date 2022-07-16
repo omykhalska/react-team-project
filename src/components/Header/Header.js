@@ -6,16 +6,19 @@ import { UserInfo } from '../UserInfo';
 import { BurgerDrawer } from '../BurgerDrawer';
 import { useSelector } from 'react-redux';
 import { authSelectors } from '../../redux/auth';
-import { Logo } from '../Logo';
-// import { SwitchTheme } from '../../components/SwitchTheme';
+import { LinkLogo } from '../Logo/LinkLogo';
+
+import { SwitchTheme } from '../../components/SwitchTheme';
 
 import {
   NavWrapper,
+  HeaderSubContainer,
   BurgerWrapper,
   HeaderStyled,
   UserInfoWrapperDesc,
   UserInfoWrapperMobile,
   UserBarMobile,
+  SettingsIcon,
 } from './Header.styled';
 
 export const Header = () => {
@@ -37,9 +40,11 @@ export const Header = () => {
   return (
     <>
       <HeaderStyled>
+        {/* <SettingsIcon>settings</SettingsIcon> */}
         <Container>
           <NavWrapper>
-            <Logo />
+            <LinkLogo />
+
             <NavInHeader />
             {isLoggedIn && (
               <>
@@ -56,7 +61,6 @@ export const Header = () => {
               </>
             )}
           </NavWrapper>
-          {/* <SwitchTheme /> */}
         </Container>
       </HeaderStyled>
       {isLoggedIn && (

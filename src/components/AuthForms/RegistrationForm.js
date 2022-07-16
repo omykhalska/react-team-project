@@ -22,8 +22,8 @@ import {
 } from './forms.styled';
 import { authSelectors } from '../../redux/auth';
 import { createToast } from '../../functions';
-
 import { useFormik } from 'formik';
+import GoogleAuth from './GoogleAuth';
 
 export default function RegistrationForm() {
   const dispatch = useDispatch();
@@ -54,7 +54,10 @@ export default function RegistrationForm() {
 
   useEffect(() => {
     if (isError) {
-      createToast('error', 'Wrong register');
+      createToast(
+        'error',
+        'This mail is already in use. Please, login!'
+      );
       return;
     }
   }, [isError]);
@@ -182,6 +185,7 @@ export default function RegistrationForm() {
           <BtnWrapp>
             <Button type="submit">Register</Button>
             <ButtonLink to="/login">Login</ButtonLink>
+            <GoogleAuth />
           </BtnWrapp>
         </AuthForm>
       </Wrapper>

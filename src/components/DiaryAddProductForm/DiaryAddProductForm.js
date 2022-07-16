@@ -1,4 +1,4 @@
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { nanoid } from 'nanoid';
@@ -18,9 +18,12 @@ import {
   DiaryAddProduct,
 } from './DiaryAddProductForm.styled';
 import { useWindowDimensions } from '../../customHooks';
+import { addProduct } from '../../services/productsAPI';
+import { breakPoints } from '../../libs/constants';
 
-import { createProduct } from '../../services/connectionsAPI';
-axios.defaults.baseURL = 'http://localhost:8080/api';
+// import { baseURL } from '../../libs/constants';
+
+// axios.defaults.baseURL = baseURL;
 
 export function DiaryAddProductForm({
   theme,
@@ -95,7 +98,8 @@ export function DiaryAddProductForm({
     }
 
     if (grams.length === 0) {
-      createToast('warning', 'Fill in the gram field!');
+      createToast('warning', 'Fill in the grams field!');
+      return;
     }
 
     const requestObj = {
@@ -105,17 +109,17 @@ export function DiaryAddProductForm({
     };
 
     try {
-      const { data } = await createProduct(requestObj);
-      console.log(data);
+      const { data } = await addProduct(requestObj);
+      // console.log(data);
       getProduct(data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
 
     setProduct('');
     setGrams('');
 
-    if (windowDimensions.width < 768) {
+    if (windowDimensions.width < breakPoints.TABLET) {
       onClose();
     }
   }
@@ -138,8 +142,12 @@ export function DiaryAddProductForm({
               outline: none;
               background-color: transparent;
               color: ${theme.fontColors.primary};
+              overflow: hidden;
+              text-overflow: ellipsis;
 
               ::placeholder {
+                color: ${theme.fontColors.primary};
+
                 font-family: 'VerdanaBold';
                 letter-spacing: 0.04em;
               }
@@ -181,11 +189,11 @@ export function DiaryAddProductForm({
             }
           />
 
-          {windowDimensions.width >= 768 && (
+          {windowDimensions.width >= breakPoints.TABLET && (
             <AddButton type="submit" />
           )}
 
-          {windowDimensions.width < 768 && (
+          {windowDimensions.width < breakPoints.TABLET && (
             <AddButtonModal type="submit" />
           )}
         </FormBody>
@@ -220,3 +228,10 @@ export function DiaryAddProductForm({
     </DiaryAddProduct>
   );
 }
+
+DiaryAddProductForm.propTypes = {
+  date: PropTypes.string.isRequired,
+  theme: PropTypes.object.isRequired,
+  onClose: PropTypes.func,
+  getProduct: PropTypes.func.isRequired,
+};
