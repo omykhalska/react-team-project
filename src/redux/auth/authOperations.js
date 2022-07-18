@@ -7,8 +7,10 @@ export const googleAuth = createAsyncThunk(
   'auth/google',
   async () => {
     try {
+      // -- написать логику ?----------
       const { data } =
         await connectionsAPI.fetchGoogleAuth();
+      // -----------------------------
       token.set(data.token);
       return data;
     } catch (error) {
@@ -19,7 +21,7 @@ export const googleAuth = createAsyncThunk(
 
 export const register = createAsyncThunk(
   'auth/register',
-  async userData => {
+  async (userData, { rejectWithValue }) => {
     try {
       const { data } = await connectionsAPI.fetchRegister(
         userData
@@ -27,14 +29,14 @@ export const register = createAsyncThunk(
 
       return data;
     } catch (error) {
-      return error.rejectWithValue();
+      return rejectWithValue(error.response);
     }
   }
 );
 
 export const logIn = createAsyncThunk(
   'auth/login',
-  async userData => {
+  async (userData, { rejectWithValue }) => {
     try {
       const { data } = await connectionsAPI.fetchLogIn(
         userData
@@ -42,7 +44,7 @@ export const logIn = createAsyncThunk(
       token.set(data.token);
       return data;
     } catch (error) {
-      return error.rejectWithValue();
+      return rejectWithValue(error.response);
     }
   }
 );

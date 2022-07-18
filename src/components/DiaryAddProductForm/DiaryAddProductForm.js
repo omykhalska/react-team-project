@@ -21,10 +21,6 @@ import { useWindowDimensions } from '../../customHooks';
 import { addProduct } from '../../services/productsAPI';
 import { breakPoints } from '../../libs/constants';
 
-// import { baseURL } from '../../libs/constants';
-
-// axios.defaults.baseURL = baseURL;
-
 export function DiaryAddProductForm({
   theme,
   date,
@@ -102,6 +98,14 @@ export function DiaryAddProductForm({
       return;
     }
 
+    if (grams <= 0 || grams > 99999) {
+      createToast(
+        'warning',
+        'You can enter from 1 to 99999!'
+      );
+      return;
+    }
+
     const requestObj = {
       productId: productObj._id,
       weight: grams,
@@ -127,7 +131,7 @@ export function DiaryAddProductForm({
 
   return (
     <DiaryAddProduct>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <FormBody>
           <DebounceInput
             className={css`
@@ -154,7 +158,7 @@ export function DiaryAddProductForm({
             `}
             autoComplete="off"
             id="debounceInput"
-            debounceTimeout={500}
+            debounceTimeout={0}
             onChange={e => {
               setProduct(e.target.value);
             }}
@@ -172,6 +176,7 @@ export function DiaryAddProductForm({
             autoComplete="off"
             type="number"
             min="0"
+            max="99999"
             id="pyat"
             className={css`
               -moz-appearance: textfield;
@@ -197,7 +202,6 @@ export function DiaryAddProductForm({
             <AddButtonModal type="submit" />
           )}
         </FormBody>
-
         {product !== productsArray[0] &&
           product.length !== 0 &&
           isFocus && (

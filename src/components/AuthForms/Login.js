@@ -18,14 +18,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { authSelectors } from '../../redux/auth';
 import { createToast } from '../../functions';
 import GoogleAuth from './GoogleAuth';
 
 export default function Login(props) {
   const dispatch = useDispatch();
   const [showPassword, setShow] = useState(false);
-  const isError = useSelector(authSelectors.getError);
 
   const formik = useFormik({
     initialValues: {
@@ -35,20 +33,22 @@ export default function Login(props) {
     validationSchema: validationsSchemaSignInEn,
     onSubmit: values => {
       const { email, password } = values;
-      dispatch(logIn({ email, password }));
+      dispatch(logIn({ email, password }))
+        .unwrap()
+        .catch(error => {
+          if (error) {
+            return createToast(
+              'error',
+              'Incorrect credentials!'
+            );
+          }
+        });
     },
   });
 
   const changePassword = () => {
     setShow(prev => (prev = !prev));
   };
-
-  useEffect(() => {
-    if (isError) {
-      createToast('error', 'Incorrect credentials!');
-      return;
-    }
-  }, [isError]);
 
   return (
     <Container>
@@ -57,12 +57,13 @@ export default function Login(props) {
         <AuthForm
           noValidate
           component="form"
-          autoComplete="off"
+          autoComplete="on"
           onSubmit={formik.handleSubmit}
         >
           <FormFlexContainer>
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Email"
               id="email"
@@ -79,6 +80,7 @@ export default function Login(props) {
             />
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Password"
               id="password"
@@ -118,8 +120,8 @@ export default function Login(props) {
           </FormFlexContainer>
           <BtnWrapp>
             <Button type="submit">Login</Button>
-            <ButtonLink to="/register">Register</ButtonLink>
             <GoogleAuth />
+            <ButtonLink to="/register">Register</ButtonLink>
           </BtnWrapp>
         </AuthForm>
       </Wrapper>

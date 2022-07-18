@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
@@ -20,7 +20,6 @@ import {
   ButtonLink,
   MyInput,
 } from './forms.styled';
-import { authSelectors } from '../../redux/auth';
 import { createToast } from '../../functions';
 import { useFormik } from 'formik';
 import GoogleAuth from './GoogleAuth';
@@ -28,7 +27,6 @@ import GoogleAuth from './GoogleAuth';
 export default function RegistrationForm() {
   const dispatch = useDispatch();
   const [showPassword, setShow] = useState(false);
-  const isError = useSelector(authSelectors.getError);
 
   const formik = useFormik({
     initialValues: {
@@ -40,27 +38,31 @@ export default function RegistrationForm() {
     validationSchema: validationsSchemaRegistrationEn,
     onSubmit: values => {
       const { name, email, password } = values;
-      dispatch(register({ name, email, password })).then(
-        () => {
+      dispatch(register({ name, email, password }))
+        .unwrap()
+        .then(() => {
           dispatch(logIn({ email, password }));
-        }
-      );
+        })
+        .catch(error => {
+          if (error.status === 400) {
+            return createToast(
+              'error',
+              'Invalid email format!'
+            );
+          }
+          if (error.status === 409) {
+            return createToast(
+              'error',
+              'This mail is already in use. Please, login!'
+            );
+          }
+        });
     },
   });
 
   const changePassword = () => {
     setShow(prev => (prev = !prev));
   };
-
-  useEffect(() => {
-    if (isError) {
-      createToast(
-        'error',
-        'This mail is already in use. Please, login!'
-      );
-      return;
-    }
-  }, [isError]);
 
   return (
     <Container>
@@ -69,12 +71,13 @@ export default function RegistrationForm() {
         <AuthForm
           noValidate
           component="form"
-          autoComplete="off"
+          autoComplete="on"
           onSubmit={formik.handleSubmit}
         >
           <FormFlexContainer>
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Name"
               id="name"
@@ -91,6 +94,7 @@ export default function RegistrationForm() {
             />
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Email"
               id="email"
@@ -107,6 +111,7 @@ export default function RegistrationForm() {
             />
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Password"
               id="password"
@@ -145,6 +150,7 @@ export default function RegistrationForm() {
             />
             <MyInput
               fullWidth
+              autoComplete="off"
               variant="standard"
               label="Confirm password"
               id="confirmPassword"
@@ -184,8 +190,8 @@ export default function RegistrationForm() {
           </FormFlexContainer>
           <BtnWrapp>
             <Button type="submit">Register</Button>
-            <ButtonLink to="/login">Login</ButtonLink>
             <GoogleAuth />
+            <ButtonLink to="/login">Login</ButtonLink>
           </BtnWrapp>
         </AuthForm>
       </Wrapper>

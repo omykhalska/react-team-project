@@ -20,7 +20,9 @@ export const DiaryDateCalendar = ({
         value={pickedDate}
         autoFocus={false}
         clearIcon={null}
+        locale={'en'}
         maxDate={new Date()}
+        minDate={new Date(2022, 0, 1)}
         calendarIcon={
           <RiCalendar2Fill color={'#9B9FAA'} size={20} />
         }

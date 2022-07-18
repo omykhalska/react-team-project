@@ -12,6 +12,7 @@ export const MyTextInput = ({ label, ...props }) => {
   const inputProps = {
     min: 0,
     max: 500,
+    autoComplete: 'off',
   };
   return (
     <>
