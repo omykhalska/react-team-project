@@ -1,23 +1,17 @@
-import React from 'react';
-// import { useDispatch } from 'react-redux';
-// import { googleAuth } from '../../redux/auth/authOperations';
 import { ButtonGoogle } from './forms.styled';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from 'react-i18next';
+
 import { baseURL } from '../../libs/constants';
+import '../../utils/i18next';
 
 export default function GoogleAuth() {
-  //   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   return (
     <>
-      <ButtonGoogle
-        //   -- прямой запрос на бек для входа через гугл
-        href={`${baseURL}/users/google`}
-
-        // type="button"
-        // onClick={() => dispatch(googleAuth())}
-      >
-        SignIn with{' '}
+      <ButtonGoogle href={`${baseURL}/users/google`}>
+        {t('auth.google')}{' '}
         <FcGoogle size={30} style={{ marginLeft: 5 }} />
       </ButtonGoogle>
     </>

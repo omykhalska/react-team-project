@@ -1,20 +1,21 @@
-import React from 'react';
-// import PropTypes from 'prop-types';
-
+import { useEffect } from 'react';
 import { Container } from '../../components/Container';
 import Login from '../../components/AuthForms/Login';
 import { MainBox } from '../MainPage/MainPage.styled';
 import { LoginRegisterWrapper } from './LoginPage.styled';
-export default function LoginPage(props) {
+
+export default function LoginPage() {
+  useEffect(() => {
+    document.title = 'Login - SlimMom ';
+  }, []);
+
   return (
-    <Container>
-      <MainBox>
+    <MainBox>
+      <Container>
         <LoginRegisterWrapper>
           <Login />
         </LoginRegisterWrapper>
-      </MainBox>
-    </Container>
+      </Container>
+    </MainBox>
   );
 }
-
-LoginPage.propTypes = {};

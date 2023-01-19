@@ -1,9 +1,7 @@
-import React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCurrentUser } from '../../redux/auth/authOperations';
-// import PropTypes from 'prop-types';
 import { authSelectors } from '../../redux/auth';
 
 import { DailyCaloriesForm } from '../../components/DailyCaloriesForm';
@@ -17,7 +15,11 @@ import { Container } from '../../components/Container';
 import { RightSideBar } from '../../components/RightSideBar/RightSideBar';
 import { fetchUserData } from '../../services/connectionsAPI';
 
-export default function CalculatorPage(props) {
+export default function CalculatorPage() {
+  useEffect(() => {
+    document.title = 'Calculator - SlimMom ';
+  }, []);
+
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(
     authSelectors.getIsLoggedIn
@@ -29,12 +31,9 @@ export default function CalculatorPage(props) {
     JSON.parse(
       window.localStorage.getItem('calculatingData')
     ) ?? {};
-
-  const isLsDataAvailable =
-    Object.keys(parsedData).length !== 0;
-  const calculatingData = isLsDataAvailable
-    ? parsedData
-    : userData;
+  const calculatingData = userData.height
+    ? userData
+    : parsedData;
 
   const calculatorSubmitHandler = async calculatingData => {
     try {
@@ -70,8 +69,8 @@ export default function CalculatorPage(props) {
   return (
     <UserPagesWrapper>
       <UserPagesLayer>
-        <Container>
-          <UserPagesBackWrapper>
+        <UserPagesBackWrapper>
+          <Container>
             <CalculatorWrapper>
               {isLoggedIn && (
                 <DailyCaloriesForm
@@ -82,11 +81,9 @@ export default function CalculatorPage(props) {
               )}
               {isLoggedIn && <RightSideBar />}
             </CalculatorWrapper>
-          </UserPagesBackWrapper>
-        </Container>
+          </Container>
+        </UserPagesBackWrapper>
       </UserPagesLayer>
     </UserPagesWrapper>
   );
 }
-
-CalculatorPage.propTypes = {};

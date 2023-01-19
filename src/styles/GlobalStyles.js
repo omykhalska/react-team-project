@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
-import Verdana from './assets/fonts/Verdana.ttf';
-import VerdanaBold from './assets/fonts/Verdana-Bold.ttf';
-import GothamproBold from './assets/fonts/gothampro_bold.ttf';
-import GothamproLight from './assets/fonts/gothampro_light.ttf';
+import Verdana from '../assets/fonts/Verdana.woff';
+import VerdanaBold from '../assets/fonts/Verdana-Bold.woff';
+import GothamproBold from '../assets/fonts/gothampro_bold.woff';
+import GothamproLight from '../assets/fonts/gothampro_light.woff';
 
 export const GlobalStyles = theme => css`
   *::before,
@@ -17,6 +17,7 @@ export const GlobalStyles = theme => css`
     font-weight: normal;
     font-style: normal;
     font-display: auto;
+    font-display: swap;
   }
   @font-face {
     font-family: 'VerdanaBold';
@@ -24,6 +25,7 @@ export const GlobalStyles = theme => css`
     font-weight: 700;
     font-style: normal;
     font-display: auto;
+    font-display: swap;
   }
   @font-face {
     font-family: 'GothamproBold';
@@ -31,6 +33,7 @@ export const GlobalStyles = theme => css`
     font-weight: 700;
     font-style: normal;
     font-display: auto;
+    font-display: swap;
   }
   @font-face {
     font-family: 'GothamproLight';
@@ -38,12 +41,14 @@ export const GlobalStyles = theme => css`
     font-weight: 300;
     font-style: normal;
     font-display: auto;
+    font-display: swap;
   }
 
   body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    width: 100%;
     font-family: 'Verdana';
     font-size: 14px;
     background-color: ${theme.backgrounds.bodyPrimary};

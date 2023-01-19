@@ -1,4 +1,3 @@
-import React from 'react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
@@ -7,10 +6,7 @@ import { DiaryDateCalendar } from '../../components/DiaryDateCalendar';
 import { RightSideBar } from '../../components/RightSideBar/RightSideBar';
 import { Container } from '../../components/Container';
 import { DiaryAddProductForm } from '../../components/DiaryAddProductForm/DiaryAddProductForm';
-
-//форматування вибраної дати для req.params у форматі (рік-місяць-день)
 import { formatDateForFetch } from '../../functions/formatDateForFetch';
-//перевірка, чи співпадає дата вибрана в календарі з сьогоднішньою
 import { isPickedDateToday } from '../../functions/isPickedDateToday';
 import {
   UserPagesBackWrapper,
@@ -28,6 +24,10 @@ import { useWindowDimensions } from '../../customHooks';
 import { breakPoints } from '../../libs/constants';
 
 export default function DiaryPage({ theme }) {
+  useEffect(() => {
+    document.title = 'Diary - SlimMom';
+  }, []);
+
   const windowDimensions = useWindowDimensions();
   const [pickedDate, setPickedDate] = useState(new Date());
   const [productsForDay, setProductsForDay] =
@@ -56,7 +56,6 @@ export default function DiaryPage({ theme }) {
       : (document.body.style.overflow = '');
   }, [showModal]);
 
-  //ефект при маунті або якщо змінилася дата в календарі
   useEffect(() => {
     const formattedPickedDate =
       formatDateForFetch(pickedDate);
@@ -65,13 +64,9 @@ export default function DiaryPage({ theme }) {
         const { data } = await axios.get(
           `/days/${formattedPickedDate}`
         );
-        //для таблиці
         setProductsForDay(data.data.productsForDay);
-        //для summary по дню
         setSummary(data.data.summary);
       } catch (error) {
-        // console.log(error);
-        //якщо данних по дню немає, бек кидає BAD REQUEST
         if (error?.response?.status === 404) {
           setProductsForDay([]);
           setSummary(null);
@@ -81,7 +76,6 @@ export default function DiaryPage({ theme }) {
     fetchInfoForDay();
   }, [pickedDate]);
 
-  // ===== get newProduct and summary ==== //
   function getAddProduct(data) {
     const newProduct = data.addedProduct;
     const newSummary = data.summary;
@@ -96,13 +90,12 @@ export default function DiaryPage({ theme }) {
     setSummary(newSummary);
     return data;
   }
-  // =================================== //
 
   return (
     <DiaryPagesWrapper>
       <UserPagesLayer>
-        <Container>
-          <UserPagesBackWrapper>
+        <UserPagesBackWrapper>
+          <Container>
             <DiaryPageWrapper>
               <div>
                 <DiaryDateCalendar
@@ -121,12 +114,6 @@ export default function DiaryPage({ theme }) {
                     />
                   )}
 
-                {/* <DiaryProductsList
-                data={products}
-                isPickedDateToday={isPickedDateToday()}
-                pickedDate={pickedDate}
-              /> */}
-
                 <DiaryProductsList
                   productsForDay={productsForDay}
                   setProductsForDay={setProductsForDay}
@@ -143,7 +130,10 @@ export default function DiaryPage({ theme }) {
                     <ButtonOpenModalWrapper
                       onClick={toggleModal}
                     >
-                      <AddButton type="submit" />
+                      <AddButton
+                        type="submit"
+                        theme={theme}
+                      />
                     </ButtonOpenModalWrapper>
                   )}
               </div>
@@ -166,8 +156,8 @@ export default function DiaryPage({ theme }) {
                 </MainModal>
               )}
             </DiaryPageWrapper>
-          </UserPagesBackWrapper>
-        </Container>
+          </Container>
+        </UserPagesBackWrapper>
       </UserPagesLayer>
     </DiaryPagesWrapper>
   );

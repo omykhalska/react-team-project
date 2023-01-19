@@ -1,10 +1,8 @@
 import * as yup from 'yup';
-
-const emailRegExp =
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-const passwordRegExp =
-  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?!.*\W).*$/;
+import {
+  emailRegExp,
+  passwordRegExp,
+} from '../../libs/constants';
 
 export const validationsSchemaRegistrationEn = yup
   .object()
@@ -33,7 +31,7 @@ export const validationsSchemaRegistrationEn = yup
       .required()
       .matches(
         passwordRegExp,
-        'only Latin & number (min: 8 characters, 1 upper, 1 num)'
+        'min: 8 Latin & number, 1 upper, 1 num'
       ),
 
     confirmPassword: yup

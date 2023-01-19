@@ -3,21 +3,17 @@ import { Routes, Route } from 'react-router-dom';
 import { Global } from '@emotion/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThemeProvider } from '@mui/material/styles';
-
-import { ThemeLight, ThemeDark } from '../../Theme';
-import { GlobalStyles } from '../../GlobalStyles';
+import { ThemeLight, ThemeDark } from '../../styles/Theme';
+import { GlobalStyles } from '../../styles/GlobalStyles';
 import {
   authOperations,
   authSelectors,
 } from '../../redux/auth';
 import { themeSelectors } from '../../redux/theme';
 import { MainLoader } from '../../components/MainLoader';
-
 import { PublicRoute } from '../../routes/PublicRoute';
 import { PrivateRoute } from '../../routes/PrivateRoute';
-
 import { Layout } from '../../Layout';
-
 import { Redirect } from '../AuthForms/Redirect';
 
 const MainPage = lazy(() => import('../../pages/MainPage'));
@@ -64,7 +60,10 @@ export function App() {
                 <Route
                   index
                   element={
-                    <PublicRoute>
+                    <PublicRoute
+                      restricted
+                      redirectTo="/calculator"
+                    >
                       <MainPage />
                     </PublicRoute>
                   }
@@ -81,7 +80,7 @@ export function App() {
                     </PublicRoute>
                   }
                 />
-                {/* для получения ответа с бекенда с токеном, мылом и именем */}
+
                 <Route
                   path="google-redirect"
                   element={
@@ -93,7 +92,7 @@ export function App() {
                     </PublicRoute>
                   }
                 />
-                {/* -------------------------------------------------------------- */}
+
                 <Route
                   path="register"
                   element={

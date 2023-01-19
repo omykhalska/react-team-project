@@ -3,11 +3,16 @@ import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
 import axios from 'axios';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+
 import {
   TableStyled,
   ButtonCross,
 } from './DiaryProductsList.styled';
 import { AlertModal } from '../AlertModal';
+import { languageSelectors } from '../../redux/language';
+import '../../utils/i18next';
 
 export const DiaryProductsList = ({
   productsForDay,
@@ -15,17 +20,19 @@ export const DiaryProductsList = ({
   setSummary,
   isPickedDateToday,
 }) => {
-  const productList = makeRows();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [productIndex, setProductIndex] = useState('');
+  const lang = useSelector(languageSelectors.getLanguage);
+  const productList = makeRows(lang);
+  const { t } = useTranslation();
 
-  function makeRows() {
+  function makeRows(lang) {
     const rowsData = productsForDay?.reduce(
       (acc, product) => {
         acc.push({
-          title: product.product_id.title.en,
+          title: product.product_id.title[lang],
           weight: `${product.weight} g`,
           calories: `${product.calories} kcal`,
           key: product._id,
@@ -49,16 +56,13 @@ export const DiaryProductsList = ({
       return data.data.summary;
     } catch (error) {
       console.log(error);
-      //toast something went wrong
     }
   };
 
   const removeProduct = async index => {
-    //відправити на бек видалення
     const returnedSummary = await removeProductFromDB(
       productList[index]
     );
-    //видалити зі стейту i обновити саммарі
     if (returnedSummary) {
       const newData = productsForDay.slice();
       newData.splice(index, 1);
@@ -134,13 +138,13 @@ export const DiaryProductsList = ({
         columns={columns}
         data={productList}
         showHeader={false}
-        emptyText={'No products in diary for this day'}
+        emptyText={t('diary.emptyField')}
       />
       <AlertModal
         open={open}
         handleClose={handleClose}
         handleConfirm={() => confirmDeleting(productIndex)}
-        text={'Are you sure you want to delete?'}
+        text={t('diary.delete')}
       ></AlertModal>
     </>
   );

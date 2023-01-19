@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-// import PropTypes from 'prop-types';
-
+import { useEffect, useState } from 'react';
 import { Container } from '../../components/Container';
 import { MainBox, MainWrapper } from './MainPage.styled';
 import { DailyCaloriesForm } from '../../components/DailyCaloriesForm/DailyCaloriesForm.js';
@@ -8,7 +6,11 @@ import { getKcal } from '../../services/getKcal';
 
 import { Modal } from '../../components/Modal/Modal';
 
-export default function MainPage(props) {
+export default function MainPage() {
+  useEffect(() => {
+    document.title = 'SlimMom';
+  }, []);
+
   const [modalData, setModalData] = useState({});
   const [calculatingData, setCalculatingData] = useState(
     {}
@@ -53,8 +55,8 @@ export default function MainPage(props) {
 
   return (
     <>
-      <Container>
-        <MainBox>
+      <MainBox>
+        <Container>
           <MainWrapper>
             <DailyCaloriesForm
               onFormSubmit={calculatorSubmitHandler}
@@ -69,10 +71,8 @@ export default function MainPage(props) {
               />
             )}
           </MainWrapper>
-        </MainBox>
-      </Container>
+        </Container>
+      </MainBox>
     </>
   );
 }
-
-MainPage.propTypes = {};

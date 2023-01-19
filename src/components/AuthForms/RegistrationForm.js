@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useFormik } from 'formik';
+import GoogleAuth from './GoogleAuth';
+import { useTranslation } from 'react-i18next';
+
 import { Container } from '../Container';
 import {
   logIn,
   register,
 } from '../../redux/auth/authOperations';
-import { validationsSchemaRegistrationEn } from './validationShema';
+import {
+  validationsSchemaRegistrationEn,
+  validationsSchemaRegistrationUA,
+} from './validationShema';
 import {
   Wrapper,
   FormTitle,
@@ -21,10 +28,12 @@ import {
   MyInput,
 } from './forms.styled';
 import { createToast } from '../../functions';
-import { useFormik } from 'formik';
-import GoogleAuth from './GoogleAuth';
+import '../../utils/i18next';
+import { languageSelectors } from '../../redux/language';
 
 export default function RegistrationForm() {
+  const { t } = useTranslation();
+  const lang = useSelector(languageSelectors.getLanguage);
   const dispatch = useDispatch();
   const [showPassword, setShow] = useState(false);
 
@@ -35,7 +44,10 @@ export default function RegistrationForm() {
       password: '',
       confirmPassword: '',
     },
-    validationSchema: validationsSchemaRegistrationEn,
+    validationSchema:
+      lang === 'en'
+        ? validationsSchemaRegistrationEn
+        : validationsSchemaRegistrationUA,
     onSubmit: values => {
       const { name, email, password } = values;
       dispatch(register({ name, email, password }))
@@ -47,22 +59,18 @@ export default function RegistrationForm() {
           if (error.status === 400) {
             return createToast(
               'error',
-              'Invalid email format!'
+              `${t('auth.invalid')}`
             );
           }
           if (error.status === 409) {
             return createToast(
               'error',
-              'This mail is already in use. Please, login!'
+              `${t('auth.alreadyUse')}`
             );
           }
         });
     },
   });
-
-  useEffect(() => {
-    return createToast('info', 'Registration please!');
-  }, []);
 
   const changePassword = () => {
     setShow(prev => (prev = !prev));
@@ -71,7 +79,7 @@ export default function RegistrationForm() {
   return (
     <Container>
       <Wrapper>
-        <FormTitle>register</FormTitle>
+        <FormTitle>{t('auth.registerTitle')}</FormTitle>
         <AuthForm
           noValidate
           component="form"
@@ -83,7 +91,7 @@ export default function RegistrationForm() {
               fullWidth
               autoComplete="off"
               variant="standard"
-              label="Name"
+              label={t('auth.name')}
               id="name"
               value={formik.name}
               onChange={formik.handleChange}
@@ -100,7 +108,7 @@ export default function RegistrationForm() {
               fullWidth
               autoComplete="off"
               variant="standard"
-              label="Email"
+              label={t('auth.email')}
               id="email"
               value={formik.email}
               onChange={formik.handleChange}
@@ -117,7 +125,7 @@ export default function RegistrationForm() {
               fullWidth
               autoComplete="off"
               variant="standard"
-              label="Password"
+              label={t('auth.password')}
               id="password"
               type={showPassword ? 'text' : 'password'}
               value={formik.password}
@@ -156,7 +164,7 @@ export default function RegistrationForm() {
               fullWidth
               autoComplete="off"
               variant="standard"
-              label="Confirm password"
+              label={t('auth.confirm')}
               id="confirmPassword"
               type={showPassword ? 'text' : 'password'}
               value={formik.confirmPassword}
@@ -193,8 +201,13 @@ export default function RegistrationForm() {
             />
           </FormFlexContainer>
           <BtnWrapp>
-            <Button type="submit">Register</Button>
-            <ButtonLink to="/login">Login</ButtonLink>
+            <Button type="submit">
+              {t('auth.register')}
+            </Button>
+            <GoogleAuth />
+            <ButtonLink to="/login">
+              {t('auth.login')}
+            </ButtonLink>
           </BtnWrapp>
         </AuthForm>
       </Wrapper>
